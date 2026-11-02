@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif TKA Matematika - Pilihan Ganda Kompleks (Tabel & Ceklis)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        /* Custom checkbox style */
+        .custom-checkbox {
+            width: 1.25rem;
+            height: 1.25rem;
+            accent-color: #2563eb;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen text-slate-800 antialiased selection:bg-blue-500 selection:text-white">
+
+    <!-- HEADER / TOPBAR -->
+    <header class="bg-blue-700 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white text-blue-700 p-2 rounded-lg font-bold text-lg shadow-sm">
+                    <i class="fa-solid fa-square-check"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-base sm:text-lg leading-tight">KUIS TKA MATEMATIKA INTERAKTIF</h1>
+                    <p class="text-xs text-blue-100">Model Pilihan Ganda Kompleks (Tabel Ceklis) • Kelas VI (Fase C)</p>
+                </div>
+            </div>
+
+            <!-- Header Right Info: Timer & Live Score -->
+            <div class="flex items-center space-x-3 sm:space-x-4">
+                <!-- Live Score -->
+                <div class="bg-blue-800 px-3 py-1.5 rounded-lg border border-blue-600 text-right">
+                    <div class="text-[10px] uppercase text-blue-200 font-semibold">Skor Kuis</div>
+                    <div id="live-score-display" class="font-mono text-base sm:text-lg font-bold text-amber-300">0 / 100</div>
+                </div>
+
+                <!-- Timer Display -->
+                <div id="timer-box" class="flex items-center space-x-2 bg-blue-800 px-3.5 py-1.5 rounded-lg border border-blue-600 shadow-inner">
+                    <i class="fa-regular fa-clock text-amber-300 animate-pulse text-base"></i>
+                    <div>
+                        <div class="text-[10px] uppercase tracking-wider text-blue-200 font-semibold">Sisa Waktu</div>
+                        <div id="timer" class="font-mono text-sm sm:text-base font-bold text-white tracking-wider">30:00</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="flex-grow max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- START/WELCOME SCREEN -->
+        <div id="start-screen" class="max-w-2xl mx-auto bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mt-4">
+            <div class="bg-gradient-to-r from-blue-600 to-indigo-700 p-6 text-white text-center">
+                <i class="fa-solid fa-list-check text-5xl mb-3 opacity-90"></i>
+                <h2 class="text-2xl font-bold">KUIS MATEMATIKA: PILIHAN GANDA KOMPLEKS</h2>
+                <p class="text-blue-100 text-sm mt-1">Latihan Soal Cerita Operasi Pecahan & Desimal (Mode Instant Feedback)</p>
+            </div>
+            
+            <div class="p-6 space-y-5">
+                <div class="bg-blue-50 border-l-4 border-blue-600 p-4 rounded-r-lg space-y-2">
+                    <h3 class="font-bold text-blue-900 text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-circle-info"></i> Petunjuk Pengerjaan Kuis:
+                    </h3>
+                    <ul class="text-xs text-blue-800 space-y-1.5 list-disc list-inside leading-relaxed">
+                        <li>Setiap soal menyajikan cerita dan <strong>tabel berisi 3 pernyataan</strong>.</li>
+                        <li>Berilah <strong>tanda centang (✓)</strong> pada kolom "Centang (✓)" untuk pernyataan yang <strong>BENAR</strong>. Pernyataan yang salah dikosongkan.</li>
+                        <li>Klik tombol <strong>"Cek Jawaban"</strong> untuk langsung melihat status kebenaran jawaban Anda beserta <strong>pembahasan lengkapnya</strong>.</li>
+                        <li>Alokasi waktu pengerjaan keseluruhan adalah <strong>30 Menit</strong>.</li>
+                    </ul>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Nama Lengkap Peserta</label>
+                        <input type="text" id="student-name" placeholder="Masukkan nama Anda..." class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Nomor Absen / NISN</label>
+                        <input type="text" id="student-id" placeholder="Masukkan nomor absen..." class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-sm">
+                    </div>
+                </div>
+
+                <button id="btn-start" onclick="startQuiz()" class="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold py-3 px-6 rounded-xl shadow-md hover:shadow-lg transition flex items-center justify-center space-x-2 text-base">
+                    <span>Mulai Kuis Interaktif</span>
+                    <i class="fa-solid fa-play"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- QUIZ SCREEN -->
+        <div id="quiz-screen" class="hidden space-y-5">
+
+            <!-- Progress Bar Card -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-center space-x-3 w-full sm:w-auto">
+                    <span id="question-badge" class="bg-blue-600 text-white text-xs font-bold px-3 py-1.5 rounded-md">SOAL 1 DARI 10</span>
+                    <span id="tp-badge" class="text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-100 px-2.5 py-1 rounded truncate">TP 1.1 Pecahan Senilai</span>
+                </div>
+
+                <!-- Navigation Grid Indicators -->
+                <div id="quiz-nav-indicators" class="flex flex-wrap gap-1.5 justify-center">
+                    <!-- Dynamic mini buttons built in JS -->
+                </div>
+            </div>
+
+            <!-- Main Question Card -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                
+                <!-- Story / Context Box -->
+                <div class="p-6 border-b border-slate-100 bg-slate-50">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 flex items-center gap-1.5">
+                        <i class="fa-solid fa-book-open text-blue-600"></i> Konteks Soal Cerita
+                    </h3>
+                    <p id="story-text" class="text-slate-800 text-base leading-relaxed font-normal">
+                        <!-- Dynamic Story -->
+                    </p>
+                </div>
+
+                <!-- Instruction & Statement Table -->
+                <div class="p-6 space-y-4">
+                    <p class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                        <i class="fa-solid fa-square-check text-blue-600"></i>
+                        <span>Berdasarkan keterangan di atas, berilah tanda centang (✓) pada kolom sebelah kanan untuk pernyataan yang BENAR!</span>
+                    </p>
+
+                    <!-- Table Statement -->
+                    <div class="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
+                        <table class="w-full text-left text-sm border-collapse">
+                            <thead class="bg-slate-100 text-slate-700 font-bold uppercase text-xs border-b border-slate-200">
+                                <tr>
+                                    <th class="py-3 px-4 w-12 text-center border-r border-slate-200">No.</th>
+                                    <th class="py-3 px-4 border-r border-slate-200">Pernyataan</th>
+                                    <th class="py-3 px-4 w-28 text-center">Centang (✓)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="statements-table-body" class="divide-y divide-slate-200 bg-white">
+                                <!-- Dynamic Rows inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Instant Check Button -->
+                    <div id="check-action-container" class="pt-2 flex justify-end">
+                        <button id="btn-check-answer" onclick="checkCurrentAnswer()" class="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold py-2.5 px-6 rounded-xl shadow transition flex items-center space-x-2 text-sm">
+                            <i class="fa-solid fa-magnifying-glass font-bold"></i>
+                            <span>Cek Jawaban Saya</span>
+                        </button>
+                    </div>
+
+                    <!-- Instant Feedback & Discussion Card (Hidden by default, shown after check) -->
+                    <div id="instant-feedback-card" class="hidden p-5 rounded-xl border space-y-3 transition-all duration-300">
+                        <div class="flex items-center justify-between border-b pb-2" id="feedback-header">
+                            <span id="feedback-status-title" class="font-bold text-base flex items-center gap-2">
+                                <!-- Status Icon & Title -->
+                            </span>
+                            <span id="feedback-score-tag" class="text-xs font-bold px-3 py-1 rounded-full">
+                                <!-- Score earned -->
+                            </span>
+                        </div>
+
+                        <!-- Solution / Explanation -->
+                        <div class="space-y-2 text-xs sm:text-sm text-slate-700">
+                            <div class="font-bold text-slate-900 flex items-center gap-1.5">
+                                <i class="fa-solid fa-lightbulb text-amber-500"></i>
+                                <span>Pembahasan & Alasan Kebenaran:</span>
+                            </div>
+                            <div id="feedback-discussion" class="bg-white/80 p-3 rounded-lg border border-slate-200/60 leading-relaxed space-y-1.5">
+                                <!-- Detailed discussion text -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Navigation Bar -->
+                <div class="bg-slate-50 border-t border-slate-200 px-6 py-4 flex items-center justify-between">
+                    <button id="btn-prev" onclick="prevQuestion()" class="px-4 py-2 bg-white border border-slate-300 text-slate-700 hover:bg-slate-100 rounded-lg text-sm font-semibold transition flex items-center space-x-2 shadow-sm disabled:opacity-40 disabled:cursor-not-allowed">
+                        <i class="fa-solid fa-chevron-left"></i>
+                        <span>Sebelumnya</span>
+                    </button>
+
+                    <button id="btn-next" onclick="nextQuestion()" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold transition flex items-center space-x-2 shadow-md">
+                        <span>Soal Berikutnya</span>
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- FINAL RESULT SCREEN -->
+        <div id="result-screen" class="hidden max-w-3xl mx-auto space-y-6 my-4">
+            
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-slate-900 text-white p-6 sm:p-8 text-center relative overflow-hidden">
+                    <div class="absolute -right-10 -top-10 w-40 h-40 bg-blue-600 rounded-full opacity-20 blur-2xl"></div>
+                    
+                    <span class="inline-block px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-xs font-semibold tracking-wider uppercase mb-3 border border-blue-400/30">
+                        Kuis Interaktif Selesai
+                    </span>
+                    <h2 id="res-user-name" class="text-2xl font-bold">Nama Peserta</h2>
+                    <p id="res-user-id" class="text-slate-400 text-sm mt-0.5">No. Absen: -</p>
+
+                    <!-- Score Badge -->
+                    <div class="mt-6 inline-flex flex-col items-center justify-center bg-slate-800/90 border border-slate-700 px-10 py-5 rounded-2xl shadow-inner">
+                        <span class="text-xs uppercase text-slate-400 font-semibold tracking-widest">NILAI AKHIR</span>
+                        <span id="score-text" class="text-5xl font-extrabold text-blue-400 my-1">0</span>
+                        <span id="score-status" class="text-xs font-medium px-3 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">SANGAT BAIK</span>
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 p-6 bg-slate-50 border-b border-slate-200 text-center">
+                    <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm">
+                        <div class="text-xs text-slate-500">Soal Sempurna (10 Poin)</div>
+                        <div id="stat-perfect" class="text-xl font-bold text-emerald-600 mt-1">0</div>
+                    </div>
+                    <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm">
+                        <div class="text-xs text-slate-500">Soal Sebagian Benar</div>
+                        <div id="stat-partial" class="text-xl font-bold text-amber-600 mt-1">0</div>
+                    </div>
+                    <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm">
+                        <div class="text-xs text-slate-500">Soal Salah</div>
+                        <div id="stat-incorrect" class="text-xl font-bold text-red-600 mt-1">0</div>
+                    </div>
+                    <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm">
+                        <div class="text-xs text-slate-500">Waktu Digunakan</div>
+                        <div id="stat-time" class="text-xl font-bold text-blue-600 mt-1">00:00</div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="p-6 bg-white flex justify-center gap-4">
+                    <button onclick="restartQuiz()" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow transition flex items-center space-x-2">
+                        <i class="fa-solid fa-rotate-left"></i>
+                        <span>Coba Kuis Lagi</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500 mt-auto">
+        <div class="max-w-7xl mx-auto px-4">
+            Kuis Interaktif Pilihan Ganda Kompleks • SD Negeri 2 Jengkol T.A 2026/2027
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // 10 COMPLEX MULTIPLE CHOICE QUESTIONS (STATEMENT TABLE WITH CHECKBOXES)
+        const questionsData = [
+            {
+                id: 1,
+                tp: "TP 1.1 Pecahan Senilai & Pemotongan Kue",
+                story: "Sebuah loyang kue bolu dipotong menjadi 30 bagian yang sama besar. Ibu memakan 6 potong kue, sedangkan Kakak memakan 9 potong kue. Sisanya disimpan di dalam kulkas.",
+                statements: [
+                    { id: 1, text: "Bagian kue yang telah dimakan oleh Ibu dan Kakak bersama adalah 1/2 bagian.", keyCorrect: true },
+                    { id: 2, text: "Bagian kue yang disimpan di dalam kulkas adalah 1/2 bagian.", keyCorrect: true },
+                    { id: 3, text: "Bagian kue yang dimakan Kakak saja adalah 1/3 bagian.", keyCorrect: false }
+                ],
+                discussion: "• Kue yang dimakan Ibu & Kakak = 6 + 9 = 15 potong dari 30 = 15/30 = <strong>1/2 bagian</strong> (Pernyataan 1 BENAR).<br>• Sisa kue di kulkas = 30 - 15 = 15 potong = 15/30 = <strong>1/2 bagian</strong> (Pernyataan 2 BENAR).<br>• Kue Kakak = 9/30 = 3/10 bagian (bukan 1/3 = 10/30) (Pernyataan 3 SALAH)."
+            },
+            {
+                id: 2,
+                tp: "TP 1.2 Perkalian Bilangan Asli & Pecahan",
+                story: "Pak Herman membeli 8 kantong plastik berisi beras. Setiap kantong plastik berisi 3/4 kg beras. Selain itu, Pak Herman juga membeli 4 bungkus tepung ketan yang masing-masing beratnya 1/2 kg.",
+                statements: [
+                    { id: 1, text: "Berat seluruh beras yang dibeli Pak Herman adalah 6 kg.", keyCorrect: true },
+                    { id: 2, text: "Berat seluruh tepung ketan adalah 2 kg.", keyCorrect: true },
+                    { id: 3, text: "Berat total seluruh belanjaan Pak Herman adalah 7 kg.", keyCorrect: false }
+                ],
+                discussion: "• Berat beras = 8 × 3/4 = 24/4 = <strong>6 kg</strong> (Pernyataan 1 BENAR).<br>• Berat tepung = 4 × 1/2 = 4/2 = <strong>2 kg</strong> (Pernyataan 2 BENAR).<br>• Total belanjaan = 6 + 2 = <strong>8 kg</strong> (bukan 7 kg) (Pernyataan 3 SALAH)."
+            },
+            {
+                id: 3,
+                tp: "TP 1.3 Perkalian Pecahan & Pembagian Penggunaan",
+                story: "Bu Lina membeli 12 liter minyak goreng. Sebanyak 3/4 bagian dari minyak goreng tersebut digunakan untuk keperluan usaha warung makan, sedangkan sisanya dibagi sama banyak untuk 3 tetangganya.",
+                statements: [
+                    { id: 1, text: "Minyak goreng yang digunakan untuk usaha warung makan adalah 9 liter.", keyCorrect: true },
+                    { id: 2, text: "Sisa minyak goreng yang belum digunakan adalah 3 liter.", keyCorrect: true },
+                    { id: 3, text: "Masing-masing tetangga menerima 1,5 liter minyak goreng.", keyCorrect: false }
+                ],
+                discussion: "• Warung makan = 3/4 × 12 = 9 liter (Pernyataan 1 BENAR).<br>• Sisa minyak = 12 - 9 = 3 liter (Pernyataan 2 BENAR).<br>• Tiap tetangga menerima = 3 ÷ 3 = <strong>1 liter</strong> (bukan 1,5 liter) (Pernyataan 3 SALAH)."
+            },
+            {
+                id: 4,
+                tp: "TP 1.4 Pembagian Bilangan Asli dengan Pecahan",
+                story: "Pak Bram memotong seutas tali sepanjang 10 meter menjadi bagian-bagian kecil yang masing-masing panjangnya 5/8 meter. Kemudian, setiap 4 potongan tali diikat menjadi satu ikatan.",
+                statements: [
+                    { id: 1, text: "Banyak potongan tali kecil yang diperoleh adalah 16 potong.", keyCorrect: true },
+                    { id: 2, text: "Banyak ikatan tali yang terbentuk seluruhnya adalah 4 ikat.", keyCorrect: true },
+                    { id: 3, text: "Panjang tali pada setiap ikatan adalah 2,5 meter.", keyCorrect: true }
+                ],
+                discussion: "• Banyak potongan = 10 ÷ (5/8) = 10 × (8/5) = 80/5 = <strong>16 potong</strong> (Pernyataan 1 BENAR).<br>• Banyak ikatan = 16 ÷ 4 = <strong>4 ikat</strong> (Pernyataan 2 BENAR).<br>• Panjang tali per ikat = 4 × 5/8 = 20/8 = 5/2 = <strong>2,5 meter</strong> (Pernyataan 3 BENAR)."
+            },
+            {
+                id: 5,
+                tp: "TP 1.5 Pembagian Pecahan dengan Bilangan Asli",
+                story: "Ibu memiliki 4/5 liter jus alpukat. Jus tersebut dituang sama banyak ke dalam 4 gelas. Adik meminum 2 gelas jus alpukat tersebut sampai habis.",
+                statements: [
+                    { id: 1, text: "Setiap gelas berisi 1/5 liter jus alpukat.", keyCorrect: true },
+                    { id: 2, text: "Jus alpukat yang diminum oleh Adik adalah 2/5 liter.", keyCorrect: true },
+                    { id: 3, text: "Sisa jus alpukat yang belum diminum adalah 3/5 liter.", keyCorrect: false }
+                ],
+                discussion: "• Tiap gelas = (4/5) ÷ 4 = (4/5) × (1/4) = <strong>1/5 liter</strong> (Pernyataan 1 BENAR).<br>• Diminum Adik (2 gelas) = 2 × 1/5 = <strong>2/5 liter</strong> (Pernyataan 2 BENAR).<br>• Sisa (2 gelas tersisa) = 2 × 1/5 = <strong>2/5 liter</strong> (bukan 3/5 liter) (Pernyataan 3 SALAH)."
+            },
+            {
+                id: 6,
+                tp: "TP 1.6 Konversi Pecahan ke Desimal",
+                story: "Bu Sandra membeli 4/5 kg daging sapi dan 5/8 kg udang. Bu Sandra ingin mencatat berat belanjaannya tersebut dalam bentuk bilangan desimal.",
+                statements: [
+                    { id: 1, text: "Berat daging sapi dalam bentuk desimal adalah 0,8 kg.", keyCorrect: true },
+                    { id: 2, text: "Berat udang dalam bentuk desimal adalah 0,625 kg.", keyCorrect: true },
+                    { id: 3, text: "Berat seluruh belanjaan Bu Sandra adalah 1,425 kg.", keyCorrect: true }
+                ],
+                discussion: "• Daging sapi = 4/5 = 8/10 = <strong>0,8 kg</strong> (Pernyataan 1 BENAR).<br>• Udang = 5/8 = 5 ÷ 8 = <strong>0,625 kg</strong> (Pernyataan 2 BENAR).<br>• Total belanjaan = 0,8 + 0,625 = <strong>1,425 kg</strong> (Pernyataan 3 BENAR)."
+            },
+            {
+                id: 7,
+                tp: "TP 1.7 Membandingkan & Mengurutkan Desimal",
+                story: "Dalam tes lompat jauh, Ali melompat sejauh 3,6 m, Beni melompat sejauh 3  3/5 m, dan Candra melompat sejauh 3,55 m. Lompatan terpanjang adalah lompatan terbaik.",
+                statements: [
+                    { id: 1, text: "Jarak lompatan Beni sama dengan 3,6 m.", keyCorrect: true },
+                    { id: 2, text: "Lompatan terdekat dicapai oleh Candra.", keyCorrect: true },
+                    { id: 3, text: "Urutan peserta dari lompatan terdekat adalah Beni, Ali, Candra.", keyCorrect: false }
+                ],
+                discussion: "• Beni = 3 3/5 = 3 + 0,6 = 3,6 m (Pernyataan 1 BENAR).<br>• Perbandingan lompatan: Candra (3,55 m) < Ali (3,6 m) = Beni (3,6 m). Lompatan terdekat Candra (Pernyataan 2 BENAR).<br>• Urutan dari terdekat: Candra (3,55 m), lalu Ali & Beni sejajar (3,6 m) (Pernyataan 3 SALAH)."
+            },
+            {
+                id: 8,
+                tp: "HOTS / Pengurangan Sisa Uang Tabungan",
+                story: "Bayu memiliki uang tabungan Rp100.000. Sebanyak 3/10 bagian dipakai untuk membeli tas sekolah dan 1/4 bagian dipakai untuk membeli sepatu olahraga.",
+                statements: [
+                    { id: 1, text: "Uang yang dipakai untuk membeli tas sekolah adalah Rp30.000.", keyCorrect: true },
+                    { id: 2, text: "Uang yang dipakai untuk membeli sepatu adalah Rp25.000.", keyCorrect: true },
+                    { id: 3, text: "Sisa uang tabungan Bayu adalah Rp45.000.", keyCorrect: true }
+                ],
+                discussion: "• Beli tas = 3/10 × Rp100.000 = <strong>Rp30.000</strong> (Pernyataan 1 BENAR).<br>• Beli sepatu = 1/4 × Rp100.000 = <strong>Rp25.000</strong> (Pernyataan 2 BENAR).<br>• Sisa uang = 100.000 - (30.000 + 25.000) = 100.000 - 55.000 = <strong>Rp45.000</strong> (Pernyataan 3 BENAR)."
+            },
+            {
+                id: 9,
+                tp: "HOTS / Konversi & Pembagian Kemasan Cat",
+                story: "Pak Rudi memiliki 8 liter cat air. Cat tersebut dituangkan ke dalam kaleng-kaleng kecil berukuran 4/5 liter. Semua kaleng cat kemudian dibagikan sama banyak kepada 5 pekerja cat.",
+                statements: [
+                    { id: 1, text: "Banyak kaleng kecil yang terisi cat adalah 10 kaleng.", keyCorrect: true },
+                    { id: 2, text: "Setiap pekerja menerima 2 kaleng cat.", keyCorrect: true },
+                    { id: 3, text: "Jumlah cat yang diterima setiap pekerja adalah 1,6 liter.", keyCorrect: true }
+                ],
+                discussion: "• Banyak kaleng kecil = 8 ÷ (4/5) = 8 × (5/4) = 40/4 = <strong>10 kaleng</strong> (Pernyataan 1 BENAR).<br>• Cat per pekerja = 10 ÷ 5 = <strong>2 kaleng</strong> (Pernyataan 2 BENAR).<br>• Liter cat per pekerja = 2 × 4/5 = 8/5 = <strong>1,6 liter</strong> (Pernyataan 3 BENAR)."
+            },
+            {
+                id: 10,
+                tp: "HOTS / Pembagian Lahan Kebun & Panen",
+                story: "Pak Surya memiliki lahan jagung seluas 4/5 hektare. Lahan tersebut dibagi sama luas kepada 4 orang kelompok tani. Setiap 1 hektare lahan dapat menghasilkan panen 5.000 kg jagung.",
+                statements: [
+                    { id: 1, text: "Luas lahan yang diterima setiap kelompok tani adalah 0,2 hektare.", keyCorrect: true },
+                    { id: 2, text: "Hasil panen jagung setiap kelompok tani adalah 1.000 kg.", keyCorrect: true },
+                    { id: 3, text: "Total seluruh hasil panen jagung lahan Pak Surya adalah 4.000 kg.", keyCorrect: true }
+                ],
+                discussion: "• Luas per kelompok = (4/5) ÷ 4 = 1/5 hektare = <strong>0,2 hektare</strong> (Pernyataan 1 BENAR).<br>• Panen per kelompok = 1/5 × 5.000 kg = <strong>1.000 kg</strong> (Pernyataan 2 BENAR).<br>• Total panen seluruh lahan = 4/5 × 5.000 kg = <strong>4.000 kg</strong> (Pernyataan 3 BENAR)."
+            }
+        ];
+
+        // QUIZ STATE
+        let currentIndex = 0;
+        // userCheckedState: array of 10 items, each item is array of 3 booleans [stmt1, stmt2, stmt3]
+        let userCheckedState = Array(10).fill(null).map(() => [false, false, false]);
+        let checkedSubmitted = Array(10).fill(false); // whether current q answer has been verified
+        let questionScores = Array(10).fill(0); // Score per question out of 10
+
+        let timerInterval = null;
+        let timeRemaining = 30 * 60; // 30 mins
+        let studentInfo = { name: '', id: '' };
+
+        window.onload = function() {
+            // Initial setup
+        };
+
+        // START QUIZ
+        function startQuiz() {
+            const nameInput = document.getElementById('student-name').value.trim();
+            const idInput = document.getElementById('student-id').value.trim();
+
+            if (!nameInput) {
+                alert("Harap masukkan Nama Lengkap Peserta terlebih dahulu!");
+                return;
+            }
+
+            studentInfo.name = nameInput;
+            studentInfo.id = idInput || "001";
+
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+
+            renderNavIndicators();
+            loadQuestion(0);
+            startTimer();
+        }
+
+        // TIMER LOGIC
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                
+                const minutes = Math.floor(timeRemaining / 60);
+                const seconds = timeRemaining % 60;
+
+                const formattedTime = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                document.getElementById('timer').innerText = formattedTime;
+
+                if (timeRemaining <= 300) {
+                    document.getElementById('timer-box').classList.remove('bg-blue-800');
+                    document.getElementById('timer-box').classList.add('bg-red-600', 'animate-bounce');
+                }
+
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    alert("Waktu kuis telah habis!");
+                    finishQuiz();
+                }
+            }, 1000);
+        }
+
+        // RENDER TOP MINI NAV INDICATORS
+        function renderNavIndicators() {
+            const container = document.getElementById('quiz-nav-indicators');
+            container.innerHTML = '';
+
+            questionsData.forEach((_, idx) => {
+                const btn = document.createElement('button');
+                btn.onclick = () => loadQuestion(idx);
+
+                const isCurrent = idx === currentIndex;
+                const isSubmitted = checkedSubmitted[idx];
+                const score = questionScores[idx];
+
+                let bg = 'bg-slate-200 text-slate-700 hover:bg-slate-300';
+                if (isSubmitted) {
+                    if (score === 10) bg = 'bg-emerald-600 text-white font-bold';
+                    else if (score > 0) bg = 'bg-amber-500 text-white font-bold';
+                    else bg = 'bg-red-500 text-white font-bold';
+                }
+
+                if (isCurrent) {
+                    bg += ' ring-2 ring-blue-600 ring-offset-1 font-bold';
+                }
+
+                btn.className = `w-7 h-7 rounded text-xs transition flex items-center justify-center ${bg}`;
+                btn.innerText = idx + 1;
+                container.appendChild(btn);
+            });
+        }
+
+        // LOAD QUESTION
+        function loadQuestion(index) {
+            currentIndex = index;
+            const q = questionsData[index];
+
+            // Header Badges
+            document.getElementById('question-badge').innerText = `SOAL ${index + 1} DARI ${questionsData.length}`;
+            document.getElementById('tp-badge').innerText = q.tp;
+
+            // Story Context
+            document.getElementById('story-text').innerText = q.story;
+
+            // Build Statement Table
+            const tbody = document.getElementById('statements-table-body');
+            tbody.innerHTML = '';
+
+            const isSubmitted = checkedSubmitted[index];
+            const currentState = userCheckedState[index];
+
+            q.statements.forEach((stmt, sIdx) => {
+                const tr = document.createElement('tr');
+                tr.className = isSubmitted 
+                    ? (stmt.keyCorrect ? 'bg-emerald-50/50' : 'bg-red-50/30')
+                    : 'hover:bg-slate-50 transition';
+
+                const isChecked = currentState[sIdx];
+
+                tr.innerHTML = `
+                    <td class="py-3 px-4 text-center font-bold text-slate-600 border-r border-slate-200">${sIdx + 1}.</td>
+                    <td class="py-3 px-4 border-r border-slate-200 text-slate-800 leading-normal">
+                        ${stmt.text}
+                        ${isSubmitted ? `
+                            <span class="ml-2 text-xs font-semibold px-2 py-0.5 rounded ${stmt.keyCorrect ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">
+                                (Harusnya: ${stmt.keyCorrect ? 'BENAR ✓' : 'SALAH / Kosong'})
+                            </span>
+                        ` : ''}
+                    </td>
+                    <td class="py-3 px-4 text-center">
+                        <input type="checkbox" class="custom-checkbox" 
+                            ${isChecked ? 'checked' : ''} 
+                            ${isSubmitted ? 'disabled' : ''} 
+                            onchange="onCheckboxToggle(${sIdx}, this.checked)">
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // Handle Check Button & Feedback Container
+            const feedbackCard = document.getElementById('instant-feedback-card');
+            const checkBtnContainer = document.getElementById('check-action-container');
+
+            if (isSubmitted) {
+                checkBtnContainer.classList.add('hidden');
+                feedbackCard.classList.remove('hidden');
+                displayFeedbackUI(index);
+            } else {
+                checkBtnContainer.classList.remove('hidden');
+                feedbackCard.classList.add('hidden');
+            }
+
+            // Prev & Next Buttons
+            document.getElementById('btn-prev').disabled = index === 0;
+            const nextBtn = document.getElementById('btn-next');
+            if (index === questionsData.length - 1) {
+                nextBtn.innerHTML = `<span>Lihat Hasil Akhir</span> <i class="fa-solid fa-flag-checkered"></i>`;
+                nextBtn.onclick = finishQuiz;
+            } else {
+                nextBtn.innerHTML = `<span>Soal Berikutnya</span> <i class="fa-solid fa-chevron-right"></i>`;
+                nextBtn.onclick = nextQuestion;
+            }
+
+            renderNavIndicators();
+            updateLiveScoreDisplay();
+        }
+
+        // TOGGLE CHECKBOX
+        function onCheckboxToggle(statementIdx, isChecked) {
+            userCheckedState[currentIndex][statementIdx] = isChecked;
+        }
+
+        // CHECK CURRENT ANSWER (INSTANT FEEDBACK MODE)
+        function checkCurrentAnswer() {
+            const q = questionsData[currentIndex];
+            const userState = userCheckedState[currentIndex];
+
+            // Calculate correctness
+            let correctCount = 0;
+            q.statements.forEach((stmt, idx) => {
+                if (stmt.keyCorrect === userState[idx]) {
+                    correctCount++;
+                }
+            });
+
+            // Score logic per question (Max 10 points)
+            let scoreEarned = 0;
+            if (correctCount === 3) scoreEarned = 10;
+            else if (correctCount === 2) scoreEarned = 6;
+            else if (correctCount === 1) scoreEarned = 3;
+
+            questionScores[currentIndex] = scoreEarned;
+            checkedSubmitted[currentIndex] = true;
+
+            // Refresh UI for current question
+            loadQuestion(currentIndex);
+        }
+
+        // DISPLAY FEEDBACK UI
+        function displayFeedbackUI(index) {
+            const q = questionsData[index];
+            const score = questionScores[index];
+            
+            const feedbackCard = document.getElementById('instant-feedback-card');
+            const titleEl = document.getElementById('feedback-status-title');
+            const scoreTag = document.getElementById('feedback-score-tag');
+            const discussionEl = document.getElementById('feedback-discussion');
+
+            if (score === 10) {
+                feedbackCard.className = "p-5 rounded-xl border border-emerald-300 bg-emerald-50/70 space-y-3 transition-all";
+                titleEl.className = "font-bold text-base text-emerald-800 flex items-center gap-2";
+                titleEl.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 text-xl"></i> Jawaban Anda Sempurna! (3/3 Pernyataan Tepat)`;
+                scoreTag.className = "text-xs font-bold px-3 py-1 rounded-full bg-emerald-600 text-white";
+                scoreTag.innerText = "+10 POIN";
+            } else if (score > 0) {
+                feedbackCard.className = "p-5 rounded-xl border border-amber-300 bg-amber-50/70 space-y-3 transition-all";
+                titleEl.className = "font-bold text-base text-amber-900 flex items-center gap-2";
+                titleEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-600 text-xl"></i> Sebagian Jawaban Tepat`;
+                scoreTag.className = "text-xs font-bold px-3 py-1 rounded-full bg-amber-600 text-white";
+                scoreTag.innerText = `+${score} POIN`;
+            } else {
+                feedbackCard.className = "p-5 rounded-xl border border-red-300 bg-red-50/70 space-y-3 transition-all";
+                titleEl.className = "font-bold text-base text-red-800 flex items-center gap-2";
+                titleEl.innerHTML = `<i class="fa-solid fa-circle-xmark text-red-600 text-xl"></i> Jawaban Kurang Tepat`;
+                scoreTag.className = "text-xs font-bold px-3 py-1 rounded-full bg-red-600 text-white";
+                scoreTag.innerText = "0 POIN";
+            }
+
+            discussionEl.innerHTML = q.discussion;
+        }
+
+        // UPDATE LIVE SCORE IN HEADER
+        function updateLiveScoreDisplay() {
+            const totalScore = questionScores.reduce((a, b) => a + b, 0);
+            document.getElementById('live-score-display').innerText = `${totalScore} / 100`;
+        }
+
+        // NAVIGATION
+        function nextQuestion() {
+            if (currentIndex < questionsData.length - 1) {
+                loadQuestion(currentIndex + 1);
+            }
+        }
+
+        function prevQuestion() {
+            if (currentIndex > 0) {
+                loadQuestion(currentIndex - 1);
+            }
+        }
+
+        // FINISH QUIZ & SHOW FINAL SCREEN
+        function finishQuiz() {
+            clearInterval(timerInterval);
+
+            const totalScore = questionScores.reduce((a, b) => a + b, 0);
+            
+            let perfectCount = 0;
+            let partialCount = 0;
+            let incorrectCount = 0;
+
+            questionScores.forEach(s => {
+                if (s === 10) perfectCount++;
+                else if (s > 0) partialCount++;
+                else incorrectCount++;
+            });
+
+            // Display result values
+            document.getElementById('res-user-name').innerText = studentInfo.name;
+            document.getElementById('res-user-id').innerText = "No. Absen: " + studentInfo.id;
+            document.getElementById('score-text').innerText = totalScore;
+
+            const statusEl = document.getElementById('score-status');
+            if (totalScore >= 80) {
+                statusEl.innerText = "SANGAT BAIK / LULUS";
+                statusEl.className = "text-xs font-medium px-3 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
+            } else if (totalScore >= 60) {
+                statusEl.innerText = "CUKUP / LULUS";
+                statusEl.className = "text-xs font-medium px-3 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30";
+            } else {
+                statusEl.innerText = "PERLU REMEDIAL";
+                statusEl.className = "text-xs font-medium px-3 py-0.5 rounded-full bg-red-500/20 text-red-300 border border-red-500/30";
+            }
+
+            document.getElementById('stat-perfect').innerText = perfectCount;
+            document.getElementById('stat-partial').innerText = partialCount;
+            document.getElementById('stat-incorrect').innerText = incorrectCount;
+
+            const timeUsedSec = (30 * 60) - timeRemaining;
+            const m = Math.floor(timeUsedSec / 60);
+            const s = timeUsedSec % 60;
+            document.getElementById('stat-time').innerText = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+
+            // Hide Quiz & Show Result Screen
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+        }
+
+        // RESTART QUIZ
+        function restartQuiz() {
+            currentIndex = 0;
+            userCheckedState = Array(10).fill(null).map(() => [false, false, false]);
+            checkedSubmitted = Array(10).fill(false);
+            questionScores = Array(10).fill(0);
+            timeRemaining = 30 * 60;
+
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('start-screen').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
